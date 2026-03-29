@@ -1,0 +1,14 @@
+
+services:
+  ingestion-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      # This tells Java WHERE to look inside the container
+      - APP_INGESTION_PATH=/app/landing-pad/
+    volumes:
+      - "C:/Users/noaht/Documents/Projects/FileTransferAndModificationJavaProject/FileLandingPad:/app/landing-pad"
