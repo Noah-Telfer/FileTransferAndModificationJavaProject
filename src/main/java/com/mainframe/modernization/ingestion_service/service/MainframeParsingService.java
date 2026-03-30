@@ -1,6 +1,7 @@
 package com.mainframe.modernization.ingestion_service.service;
 
 import com.mainframe.modernization.ingestion_service.model.MainframeRecord;
+import com.mainframe.modernization.ingestion_service.service.KafkaProducerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +20,12 @@ public class MainframeParsingService {
 
     @Value("${APP_INGESTION_PATH:/tmp/}")
     private String inputDir; 
+
+    private final KafkaProducerService kafkaProducerService;
+
+    public MainframeParsingService(KafkaProducerService kafkaProducerService) {
+        this.kafkaProducerService = kafkaProducerService;
+    }
 
     public void processMainframeFile(String fileName) {
         Path path = Paths.get(inputDir + fileName);
@@ -39,6 +46,7 @@ public class MainframeParsingService {
                 log.info("Parsed record: {}, {}", record.getRecordId(), record.getContent());
 
                 // Send Record to Kafka
+                kafkaProducerService.sendRecord(record);
             });
 
         } catch (IOException e) {
